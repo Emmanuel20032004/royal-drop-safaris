@@ -1,0 +1,42 @@
+@import "tailwindcss";
+@import url("https://fonts.googleapis.com/css2?family=Cinzel:wght@500;700;900&family=Manrope:wght@400;500;700;800&display=swap");
+@config "../tailwind.config.js";
+
+:root {
+  color-scheme: dark;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  margin: 0;
+  padding: 0;
+  background-color: #090725;
+  color: #d4c9ef;
+  background-image:
+    radial-gradient(circle at 10% 10%, rgba(223, 92, 182, 0.2), transparent 30%),
+    radial-gradient(circle at 90% 15%, rgba(246, 197, 90, 0.18), transparent 28%),
+    linear-gradient(135deg, #090725 0%, #15103f 45%, #07061a 100%);
+  font-family: "Manrope", "Segoe UI", sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+h1,
+h2,
+h3,
+.logo,
+.red-label,
+.section-label {
+  font-family: "Cinzel", Georgia, serif;
+}
+
+#root {
+  min-height: 100vh;
+}
+
+* {
+  box-sizing: border-box;
+}
