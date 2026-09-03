@@ -1,6 +1,7 @@
 // Emmanuel wema
 // Authentication now goes through the JSON Server API instead of localStorage.
-export const API_BASE = 'http://localhost:3000'
+// Set VITE_API_BASE at build time to point production builds at the hosted API.
+export const API_BASE = import.meta.env.VITE_API_BASE || 'http://localhost:3000'
 export const adminSessionKey = 'royal-drop-safaris-admin-session'
 export const userSessionKey = 'royal-drop-safaris-user-session'
 

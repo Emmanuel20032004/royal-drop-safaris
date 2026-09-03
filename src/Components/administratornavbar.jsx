@@ -48,6 +48,8 @@ export function AdminSidebar() {
   const [userRoleFilter, setUserRoleFilter] = useState("All");
   const [userVerificationFilter, setUserVerificationFilter] = useState("All");
 
+  // Keep editable local collections synchronized when the API response changes.
+  /* eslint-disable react-hooks/set-state-in-effect */
   useEffect(() => {
     if (fetchedPackages) setPackages(fetchedPackages);
   }, [fetchedPackages]);
@@ -59,6 +61,7 @@ export function AdminSidebar() {
   useEffect(() => {
     if (fetchedUsers) setUsers(fetchedUsers);
   }, [fetchedUsers]);
+  /* eslint-enable react-hooks/set-state-in-effect */
 
   const visiblePackages = useMemo(() => {
     return packages.filter((item) =>
