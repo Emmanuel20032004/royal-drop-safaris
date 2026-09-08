@@ -2,7 +2,7 @@ import { useEffect, useMemo, useState } from "react";
 import { Link, useNavigate } from "react-router";
 import { CalendarClock, Home, LogOut, PackagePlus, Pencil, ShieldCheck, Trash2, Users, X } from "lucide-react";
 import useFetch from "../hooks/useFetch";
-import { API_BASE, adminSessionKey, getSession } from "../auth/adminAuth.js";
+import { API_BASE, adminSessionKey, apiFetch, getSession } from "../auth/adminAuth.js";
 
 const emptyPackage = {
   name: "",
@@ -29,8 +29,8 @@ export function AdminSidebar() {
   const currentAdmin = getSession(adminSessionKey);
 
   const { data: fetchedPackages, loading, error } = useFetch(`${API_BASE}/products`);
-  const { data: fetchedBookings } = useFetch(`${API_BASE}/orders`);
-  const { data: fetchedUsers, error: usersError } = useFetch(`${API_BASE}/users`);
+  const { data: fetchedBookings } = useFetch(`${API_BASE}/orders`, { fetcher: apiFetch });
+  const { data: fetchedUsers, error: usersError } = useFetch(`${API_BASE}/users`, { fetcher: apiFetch });
 
   const [packages, setPackages] = useState([]);
   const [bookings, setBookings] = useState([]);
@@ -107,7 +107,7 @@ export function AdminSidebar() {
 
   const confirmCustomerRequest = (userId) => {
     setProcessingUserId(userId);
-    fetch(`${API_BASE}/users/${userId}`, {
+    apiFetch(`${API_BASE}/users/${userId}`, {
       method: "PATCH",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ verified: true }),
@@ -130,7 +130,7 @@ export function AdminSidebar() {
 
   const confirmBooking = (bookingId) => {
     setProcessingBookingId(bookingId);
-    fetch(`${API_BASE}/orders/${bookingId}`, {
+    apiFetch(`${API_BASE}/orders/${bookingId}`, {
       method: "PATCH",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
@@ -154,7 +154,7 @@ export function AdminSidebar() {
     if (!window.confirm(`Delete booking request for ${booking.packageName || booking.productName}?`)) return;
 
     setDeletingBookingId(booking.id);
-    fetch(`${API_BASE}/orders/${booking.id}`, {
+    apiFetch(`${API_BASE}/orders/${booking.id}`, {
       method: "DELETE",
     })
       .then(() => {
@@ -180,7 +180,7 @@ export function AdminSidebar() {
     if (!window.confirm(`Delete user account for ${user.name}?`)) return;
 
     setDeletingUserId(user.id);
-    fetch(`${API_BASE}/users/${user.id}`, {
+    apiFetch(`${API_BASE}/users/${user.id}`, {
       method: "DELETE",
     })
       .then(() => {
@@ -194,7 +194,7 @@ export function AdminSidebar() {
     event.preventDefault();
     if (!newPackage.name || !newPackage.location || !newPackage.price) return;
 
-    fetch(`${API_BASE}/products`, {
+    apiFetch(`${API_BASE}/products`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
@@ -243,7 +243,7 @@ export function AdminSidebar() {
     event.preventDefault();
     if (!editingPackage?.id) return;
 
-    fetch(`${API_BASE}/products/${editingPackage.id}`, {
+    apiFetch(`${API_BASE}/products/${editingPackage.id}`, {
       method: "PATCH",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
@@ -263,7 +263,7 @@ export function AdminSidebar() {
 
   const removePackage = (item) => {
     if (!window.confirm(`Remove ${item.name} from available packages?`)) return;
-    fetch(`${API_BASE}/products/${item.id}`, { method: "DELETE" })
+    apiFetch(`${API_BASE}/products/${item.id}`, { method: "DELETE" })
       .then(() => {
         setPackages((current) => current.filter((pkg) => pkg.id !== item.id));
       })

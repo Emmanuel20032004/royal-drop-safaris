@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { Link, useNavigate, useParams } from "react-router";
 import useFetch from "../hooks/useFetch";
-import { API_BASE, getSession, userSessionKey } from "../auth/adminAuth.js";
+import { API_BASE, apiFetch, getSession, userSessionKey } from "../auth/adminAuth.js";
 
 function ProductPage() {
   const { id } = useParams();
@@ -45,7 +45,7 @@ function ProductPage() {
     setSubmitting(true);
     setBookingStatus(null);
 
-    fetch(`${API_BASE}/orders`, {
+    apiFetch(`${API_BASE}/orders`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
