@@ -30,6 +30,11 @@ try {
 $scriptDir = rtrim(str_replace('\\', '/', dirname($_SERVER['SCRIPT_NAME'])), '/');
 $uriPath = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH) ?? '/';
 $path = '/' . ltrim(substr($uriPath, strlen($scriptDir)), '/');
+// Support both /api/products (via .htaccess rewrite) and /api/index.php/products.
+$path = preg_replace('#^/index\.php#', '', $path);
+if ($path === '' || $path === false) {
+    $path = '/';
+}
 $segments = array_values(array_filter(explode('/', $path), 'strlen'));
 $resource = $segments[0] ?? '';
 $id = $segments[1] ?? null;
