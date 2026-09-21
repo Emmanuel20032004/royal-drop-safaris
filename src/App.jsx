@@ -1,4 +1,3 @@
-{/* Neo Mwashi */}
 {/*Emmanuel wema*/}
 import { BrowserRouter, Navigate, Route, Routes } from 'react-router'
 import './App.css'

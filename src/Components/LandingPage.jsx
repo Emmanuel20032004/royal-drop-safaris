@@ -27,7 +27,7 @@ function LandingPage() {
       <div className="top-bar">
         <div className="container top-bar-content">
           <span>Royal Drop Safaris • Curated Safari & Holiday Bookings</span>
-          <span>Mon - Sun: 7:00 AM - 9:00 PM</span>
+          <span>Mon - Sun: 7:00 AM - 6:00 PM</span>
         </div>
       </div>
 
@@ -60,9 +60,9 @@ function LandingPage() {
           </form>
 
           <div className="header-right">
-            <a href="tel:+254700000000" className="phone">
+            <a href="tel:+254703790120" className="phone">
               <small>Bookings</small>
-              <strong>+254 700 000 000</strong>
+              <strong>++254 703 790120</strong>
             </a>
             <button
               className="mobile-menu"
@@ -240,7 +240,7 @@ function LandingPage() {
             <p>Nairobi, Kenya</p>
           </div>
           <div>
-            <p>Phone: +254 700 000 000</p>
+            <p>Phone: via +254 703 790120</p>
             <p>Email: bookings@royaldropsafaris.test</p>
           </div>
         </div>
