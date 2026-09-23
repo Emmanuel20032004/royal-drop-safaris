@@ -33,6 +33,7 @@ function App() {
         <Route path="/login" element={<UserLogin />} />
         <Route path="/register" element={<UserRegister />} />
         <Route path="/admin/login" element={<AdminLogin />} />
+        <Route path="/admin-portal" element={<AdminLogin />} />
         <Route path="/admin" element={<ProtectedAdminRoute />} />
       </Routes>
     </BrowserRouter>
