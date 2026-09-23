@@ -62,7 +62,7 @@ function LandingPage() {
           <div className="header-right">
             <a href="tel:+254703790120" className="phone">
               <small>Bookings</small>
-              <strong>++254 703 790120</strong>
+              <strong>+254 703 790120</strong>
             </a>
             <button
               className="mobile-menu"
@@ -240,8 +240,18 @@ function LandingPage() {
             <p>Nairobi, Kenya</p>
           </div>
           <div>
-            <p>Phone: via +254 703 790120</p>
-            <p>Email: bookings@royaldropsafaris.test</p>
+            <p>
+              Phone: via <a href="tel:+254703790120">+254 703 790120</a>
+            </p>
+            <p>
+              Email: <a href="mailto:royaldropsafaris@gmail.com">royaldropsafaris@gmail.com</a>
+            </p>
+            <p>
+              Instagram: <a href="https://www.instagram.com/royaldropsafaris/" target="_blank" rel="noreferrer">@royaldropsafaris</a>
+            </p>
+            <p>
+              Facebook: <a href="https://www.facebook.com/royaldropsafaris" target="_blank" rel="noreferrer">@royaldropsafaris</a>
+            </p>
           </div>
         </div>
       </footer>
