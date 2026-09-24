@@ -24,16 +24,16 @@ A booking website for safari adventures and hotel holiday stays.
 - React 19 + Vite
 - React Router
 - Tailwind CSS
-- json-server (mock backend)
+- Node.js API with a JSON file datastore
 - Vitest + React Testing Library
 
 ## Setup
 
 1. Install dependencies:
    - npm install
-2. Start backend:
+2. Start the full Node API and static server:
    - npm run server
-3. Start frontend:
+3. For frontend development, start Vite separately:
    - npm run dev
 4. Open the URL shown in terminal (normally http://localhost:5173)
 

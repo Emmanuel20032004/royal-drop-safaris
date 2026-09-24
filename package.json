@@ -8,7 +8,7 @@
     "build": "vite build",
     "lint": "eslint .",
     "preview": "vite preview",
-    "server": "json-server --watch db.json",
+    "server": "node server.cjs",
     "start": "node server.cjs"
   },
   "dependencies": {
