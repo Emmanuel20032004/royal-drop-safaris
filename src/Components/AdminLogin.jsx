@@ -95,8 +95,8 @@ function AdminLogin() {
         <div className="mt-6 rounded-lg border border-[#f6c55a]/30 bg-[#1a1644] p-4 text-sm text-[#d5e6ec]">
           <p className="font-bold text-[#f6c55a]">Administrator access</p>
           <p className="mt-2">Use the admin email saved in the system.</p>
-          <p className="mt-1">Current admins: <strong className="text-white">Emmanuel Wema</strong> and <strong className="text-white">Maureen Mureithi</strong>.</p>
-          <p className="mt-1">Password: <strong className="text-white">safaris@2026</strong></p>
+          <p className="mt-1">Current admins: <strong className="text-white">...</strong> and <strong className="text-white">...</strong>.</p>
+          <p className="mt-1">Password:... <strong className="text-white"></strong></p>
         </div>
 
         <p className="mt-6 text-center text-xs text-[#a196ca]">Visitors can browse packages without logging in.</p>
