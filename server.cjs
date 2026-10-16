@@ -1,14 +1,33 @@
 const http = require('node:http')
 const crypto = require('node:crypto')
 const fs = require('node:fs')
+const net = require('node:net')
 const path = require('node:path')
 
-const port = Number(process.env.PORT || 3000)
 const databasePath = path.join(__dirname, 'db.json')
 const distPath = path.join(__dirname, 'dist')
 const sessions = new Map()
 const publicResources = new Set(['products', 'orders'])
 const resources = new Set(['products', 'users', 'orders'])
+
+async function isPortAvailable(port) {
+  return new Promise((resolve) => {
+    const tester = net.createServer()
+    tester.once('error', () => resolve(false))
+    tester.once('listening', () => {
+      tester.close(() => resolve(true))
+    })
+    tester.listen(port, '127.0.0.1')
+  })
+}
+
+async function resolvePort(requestedPort = Number(process.env.PORT || 3000), maxAttempts = 20) {
+  const startPort = Number.isInteger(requestedPort) && requestedPort > 0 ? requestedPort : 3000
+  for (let port = startPort; port < startPort + maxAttempts; port += 1) {
+    if (await isPortAvailable(port)) return port
+  }
+  return startPort
+}
 
 function readDatabase() {
   return JSON.parse(fs.readFileSync(databasePath, 'utf8'))
@@ -146,18 +165,45 @@ function serveStatic(request, response) {
   fs.createReadStream(finalPath).pipe(response)
 }
 
-const server = http.createServer(async (request, response) => {
-  if (request.method === 'OPTIONS') return sendJson(response, 204, {})
-  try {
-    const route = normalizePath(request.url)
-    if (route.resource && (request.url.startsWith('/api') || resources.has(route.resource) || route.resource === 'auth')) {
-      return await handleApi(request, response, route)
+function createServer() {
+  return http.createServer(async (request, response) => {
+    if (request.method === 'OPTIONS') return sendJson(response, 204, {})
+    try {
+      const route = normalizePath(request.url)
+      if (route.resource && (request.url.startsWith('/api') || resources.has(route.resource) || route.resource === 'auth')) {
+        return await handleApi(request, response, route)
+      }
+      return serveStatic(request, response)
+    } catch (error) {
+      console.error(error)
+      return sendJson(response, error.message === 'Invalid JSON body.' ? 400 : 500, { error: error.message })
     }
-    return serveStatic(request, response)
-  } catch (error) {
-    console.error(error)
-    return sendJson(response, error.message === 'Invalid JSON body.' ? 400 : 500, { error: error.message })
-  }
-})
+  })
+}
 
-server.listen(port, '0.0.0.0', () => console.log(`Royal Drop server listening on port ${port}`))
+async function startServer() {
+  const requestedPort = Number(process.env.PORT || 3000)
+  const port = await resolvePort(requestedPort)
+  const server = createServer()
+
+  server.on('error', (error) => {
+    console.error('Server failed to start:', error)
+    process.exitCode = 1
+  })
+
+  server.listen(port, '0.0.0.0', () => {
+    console.log(`Royal Drop server listening on port ${port}`)
+  })
+
+  return server
+}
+
+if (require.main === module) {
+  startServer()
+}
+
+module.exports = {
+  createServer,
+  resolvePort,
+  startServer,
+}

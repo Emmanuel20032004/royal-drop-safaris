@@ -6,6 +6,13 @@ export const adminSessionKey = 'royal-drop-safaris-admin-session'
 export const userSessionKey = 'royal-drop-safaris-user-session'
 export const ADMIN_KEY = import.meta.env.VITE_ADMIN_KEY || ''
 
+async function readApiResponse(response) {
+  if (response.headers?.get('content-type')?.includes('text/html')) {
+    throw new Error('The API returned the website page instead of JSON. Check the Hostinger API files and routing.')
+  }
+  return response.json()
+}
+
 // Attach the admin token (and optional shared key) to API calls.
 // Falls back to plain fetch when no admin session exists (local json-server dev).
 export function apiFetch(url, options = {}) {
@@ -41,7 +48,7 @@ export function clearSession(key) {
 export async function findUserByEmail(email) {
   const response = await fetch(`${API_BASE}/users?email=${encodeURIComponent(email.trim().toLowerCase())}`)
   if (!response.ok) throw new Error('Unable to reach the account service.')
-  const matches = await response.json()
+  const matches = await readApiResponse(response)
   return matches[0] || null
 }
 
@@ -78,7 +85,7 @@ export async function loginWithApi({ email, password, requiredRole }) {
     return legacyLogin({ email: normalizedEmail, password, requiredRole })
   }
 
-  const data = await response.json().catch(() => ({}))
+  const data = await readApiResponse(response)
   if (!response.ok) {
     throw new Error(data.error || 'The email or password is incorrect.')
   }
@@ -108,5 +115,5 @@ export async function registerCustomer({ name, phone, email, password }) {
   })
 
   if (!response.ok) throw new Error('Unable to create the account.')
-  return response.json()
+  return readApiResponse(response)
 }

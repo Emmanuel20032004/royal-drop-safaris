@@ -10,7 +10,12 @@ function useFetch(url, options = {}) {
   useEffect(() => {
     const doFetch = fetcher || fetch
     doFetch(url)
-      .then((response) => response.json())
+      .then((response) => {
+        if (response.headers?.get('content-type')?.includes('text/html')) {
+          throw new Error('The API returned the website page instead of JSON. Check the Hostinger API files and routing.')
+        }
+        return response.json()
+      })
       .then((data) => {
         setData(data)
         setLoading(false)
