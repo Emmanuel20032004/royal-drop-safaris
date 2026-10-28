@@ -1,19 +1,31 @@
-import { useMemo, useState } from "react";
+import { useMemo } from "react";
 import { Link, useSearchParams } from "react-router";
 import useFetch from "../hooks/useFetch";
 import { API_BASE } from "../auth/adminAuth.js";
 
 function ProductList() {
-  const [searchParams] = useSearchParams();
+  const [searchParams, setSearchParams] = useSearchParams();
   const typeFilter = searchParams.get("type");
-  const searchFromUrl = searchParams.get("search");
+  const searchTerm = searchParams.get("search") || "";
 
-  const [searchTerm, setSearchTerm] = useState(searchFromUrl || "");
   const {
     data: packages,
     loading,
     error,
   } = useFetch(`${API_BASE}/products`);
+
+  const handleSearchChange = (event) => {
+    const nextValue = event.target.value;
+    const nextParams = new URLSearchParams(searchParams);
+
+    if (nextValue.trim()) {
+      nextParams.set("search", nextValue);
+    } else {
+      nextParams.delete("search");
+    }
+
+    setSearchParams(nextParams, { replace: true });
+  };
 
   const filteredPackages = useMemo(() => {
     return (packages || []).filter((item) => {
@@ -54,7 +66,7 @@ function ProductList() {
             type="text"
             placeholder="Search packages, destinations, or stays..."
             value={searchTerm}
-            onChange={(event) => setSearchTerm(event.target.value)}
+            onChange={handleSearchChange}
             className="w-full rounded-xl border border-admin-accent/50 bg-admin-900 px-4 py-3 text-admin-ink outline-none transition focus:border-admin-accent focus:ring-2 focus:ring-admin-accent/20 md:max-w-md"
           />
           <div className="inline-flex items-center justify-center rounded-full border border-admin-accent/25 bg-admin-900 px-4 py-2 text-sm font-semibold text-admin-muted shadow-inner shadow-black/10">
