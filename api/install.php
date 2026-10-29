@@ -1,6 +1,6 @@
 <?php
-// One-time installer: creates tables and seeds them with the current db.json data.
-// Run it once in your browser (https://your-domain/api/install.php), then DELETE this file.
+// One-time installer: create API tables and add the public package catalog.
+// Delete this file from the server immediately after it succeeds.
 
 require __DIR__ . '/config.php';
 header('Content-Type: text/plain; charset=utf-8');
@@ -36,11 +36,6 @@ $pdo->exec('CREATE TABLE IF NOT EXISTS orders (
 
 echo "Tables created (or already existed).\n";
 
-$existing = (int) $pdo->query('SELECT COUNT(*) FROM users')->fetchColumn();
-if ($existing > 0) {
-    exit("Database already contains data — seeding skipped.\nIMPORTANT: delete install.php from the server now.\n");
-}
-
 // --- Seed data (mirrors db.json) --------------------------------------------
 
 $products = [
@@ -58,36 +53,11 @@ $products = [
     ]],
 ];
 
-$users = [
-    ['id' => 'a1', 'name' => 'Emmanuel Wema', 'phone' => '+254700000001', 'email' => 'emmanuel.wema@royaldropsafaris.test', 'password' => 'safaris@2026', 'role' => 'Admin', 'verified' => true],
-    ['id' => 'a2', 'name' => 'Maureen Mureithi', 'phone' => '+254700000002', 'email' => 'maureen.mureithi@royaldropsafaris.test', 'password' => 'safaris@2026', 'role' => 'Admin', 'verified' => true],
-    ['id' => 'c1', 'name' => 'Sample Customer', 'phone' => '+254700000101', 'email' => 'customer@royaldropsafaris.test', 'password' => 'Customer2026!', 'role' => 'Customer', 'verified' => true],
-    ['id' => 'ILqAKOiiZcY', 'name' => 'EMMANUEL WEMA', 'phone' => '0707177362', 'email' => 'emmanwema003@gmail.com', 'password' => 'Kirathi2004', 'role' => 'Customer', 'verified' => true],
-];
-
-$orders = [
-    ['id' => 'c1ItQbmp9ag', 'packageId' => 'p2', 'packageName' => 'Amboseli Elephant Trail', 'packageType' => 'Safari', 'location' => 'Amboseli', 'price' => 32500, 'guests' => 1, 'checkInDate' => '2026-08-26', 'userId' => 'ILqAKOiiZcY', 'userEmail' => 'emmanwema003@gmail.com', 'status' => 'pending', 'createdAt' => '2026-08-24T08:35:54.905Z'],
-    ['id' => 'JhNI0l9ja1U', 'packageId' => 'p4', 'packageName' => 'Naivasha Family Retreat', 'packageType' => 'Hotel', 'location' => 'Naivasha', 'price' => 28500, 'guests' => 1, 'checkInDate' => '2026-08-28', 'userId' => 'ILqAKOiiZcY', 'userEmail' => 'emmanwema003@gmail.com', 'status' => 'pending', 'createdAt' => '2026-08-24T08:42:32.186Z'],
-];
-
-$insertProduct = $pdo->prepare('INSERT INTO products (id, data) VALUES (?, ?)');
+$insertProduct = $pdo->prepare('INSERT IGNORE INTO products (id, data) VALUES (?, ?)');
 foreach ($products as $product) {
     $insertProduct->execute([$product['id'], json_encode($product, JSON_UNESCAPED_SLASHES)]);
 }
 
-// Passwords are hashed before storage — plaintext never touches the database.
-$insertUser = $pdo->prepare('INSERT INTO users (id, email, data) VALUES (?, ?, ?)');
-foreach ($users as $user) {
-    $user['email'] = strtolower(trim($user['email']));
-    $user['password'] = password_hash($user['password'], PASSWORD_DEFAULT);
-    $insertUser->execute([$user['id'], $user['email'], json_encode($user, JSON_UNESCAPED_SLASHES)]);
-}
-
-$insertOrder = $pdo->prepare('INSERT INTO orders (id, data) VALUES (?, ?)');
-foreach ($orders as $order) {
-    $insertOrder->execute([$order['id'], json_encode($order, JSON_UNESCAPED_SLASHES)]);
-}
-
-echo "Seeded " . count($products) . " products, " . count($users) . " users, " . count($orders) . " orders.\n";
-echo "Login passwords are unchanged (now stored hashed).\n";
+echo "Package catalog checked; existing packages were left unchanged.\n";
+echo "No user accounts or orders were created.\n";
 echo "IMPORTANT: delete install.php from the server now.\n";

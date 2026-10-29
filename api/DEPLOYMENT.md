@@ -27,14 +27,31 @@ replace its Vite deployment when setting up the API subdomain.
    `index.php`, `config.php`, and `.htaccess` from this folder. These files
    should be directly in that document root, not in another `api` directory.
 3. Upload `install.php` temporarily to the same document root and visit
-   `https://api.royaldropsafaris.com/install.php` once to create and seed the
-   tables.
+   `https://api.royaldropsafaris.com/install.php` once to create the tables
+   and add the initial package catalog.
 4. Delete `install.php` from the server immediately after it succeeds.
 5. Confirm `https://api.royaldropsafaris.com/products` returns JSON.
 
 Do not upload `generate-admin-key.php` to a public directory. If you enable
 `ADMIN_API_KEY` in `config.php`, use the same value as `VITE_ADMIN_KEY` when
 building the frontend.
+
+## Create the first admin login
+
+1. Use the public website's Register page to create an account with the email
+   you want to use for administration.
+2. In Hostinger phpMyAdmin, select the API database and run this query,
+   replacing the email with that account's exact email:
+
+   ```sql
+   UPDATE users
+   SET data = JSON_SET(data, '$.role', 'Admin', '$.verified', TRUE)
+   WHERE email = LOWER('your-admin-email@example.com');
+   ```
+
+3. Sign out and sign back in through the admin login page. New registrations
+   are always created as unverified customers; public registration cannot
+   assign admin privileges.
 
 ## 3. Connect and redeploy the frontend
 
@@ -60,7 +77,7 @@ React app HTML:
 
 ```text
 https://api.royaldropsafaris.com/products
-https://api.royaldropsafaris.com/users?email=emmanuel.wema%40royaldropsafaris.test
+https://api.royaldropsafaris.com/users?email=your-admin-email%40example.com
 ```
 
 Admin login endpoint:

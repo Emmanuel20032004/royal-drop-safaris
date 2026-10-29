@@ -46,7 +46,8 @@ $tables = ['products', 'users', 'orders'];
 $publicGet = $method === 'GET' && in_array($resource, ['products', 'orders'], true);
 // Registration and booking submission stay open so visitors can sign up and book.
 $publicPost = $method === 'POST' && in_array($resource, ['users', 'orders'], true);
-$isPublic = $publicGet || $publicPost;
+$publicEmailLookup = $method === 'GET' && $resource === 'users' && isset($_GET['email']);
+$isPublic = $publicGet || $publicPost || $publicEmailLookup;
 
 if ($resource === 'auth' && $id === 'login' && $method === 'POST') {
     handleLogin($pdo);
@@ -84,8 +85,13 @@ function listRows(PDO $pdo, string $table): void
 {
     $isUser = $table === 'users';
     if ($isUser && isset($_GET['email'])) {
-        $stmt = $pdo->prepare('SELECT data FROM users WHERE email = ?');
+        $stmt = $pdo->prepare('SELECT id FROM users WHERE email = ?');
         $stmt->execute([strtolower(trim($_GET['email']))]);
+        $rows = array_map(
+            fn($row) => ['id' => $row['id']],
+            $stmt->fetchAll(PDO::FETCH_ASSOC)
+        );
+        respond(200, $rows);
     } else {
         $stmt = $pdo->query("SELECT data FROM `$table`");
     }
@@ -110,6 +116,12 @@ function getRow(PDO $pdo, string $table, string $id): void
 function createRow(PDO $pdo, string $table, array $body): void
 {
     $isUser = $table === 'users';
+    if ($isUser) {
+        $body['role'] = 'Customer';
+        $body['verified'] = false;
+        unset($body['apiToken']);
+    }
+
     $id = isset($body['id']) && $body['id'] !== '' ? (string) $body['id'] : generateId();
     $body['id'] = $id;
 
